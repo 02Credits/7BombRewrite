@@ -1,0 +1,8 @@
+packages/
+bin/
+obj/
+Thumbs.db
+*.csproj.user
+*.suo
+*.psess
+*.vspx
