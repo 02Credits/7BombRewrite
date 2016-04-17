@@ -18,6 +18,8 @@ namespace Falling
     {
         GraphicsDeviceManager graphics;
 
+        public static Random random;
+
         public static readonly List<Entity> Entities = new List<Entity>();
         public static readonly Dictionary<Type, object> Systems = new Dictionary<Type, object>();
         public static readonly List<IInitializedEntitySystem> InitializedEntitySystems = new List<IInitializedEntitySystem>();
@@ -34,6 +36,7 @@ namespace Falling
         public Game()
         {
             graphics = new GraphicsDeviceManager(this);
+            random = new Random();
             Content.RootDirectory = @"Content/bin";
         }
 
@@ -52,6 +55,7 @@ namespace Falling
             AddSystem(new VertexRenderer(graphics.GraphicsDevice));
             AddSystem(new VertexManager());
             AddSystem(new WallManager());
+            AddSystem(new ExplosionManager());
 
             new Entity(
                 new Textured {Path = "DebugCircle"},

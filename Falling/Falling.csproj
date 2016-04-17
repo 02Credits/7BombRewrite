@@ -56,6 +56,7 @@
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\Destructable.cs" />
     <Compile Include="Components\Dimensions.cs" />
+    <Compile Include="Components\Explosive.cs" />
     <Compile Include="Components\GridPhysics.cs" />
     <Compile Include="Components\Particle.cs" />
     <Compile Include="Components\Physics.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Systems\CameraManager.cs" />
     <Compile Include="Systems\DebugGraphicsManager.cs" />
     <Compile Include="Systems\DestructableManager.cs" />
+    <Compile Include="Systems\ExplosionManager.cs" />
     <Compile Include="Systems\PanelManager.cs" />
     <Compile Include="Systems\ParticleManager.cs" />
     <Compile Include="Systems\PhysicsManager.cs" />
