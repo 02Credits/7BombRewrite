@@ -24,6 +24,7 @@ namespace Falling.Systems
             var playerY = entity.GetComponent<Physics>().Body.Position.Y;
             var cameraWorldHeight = Game.GetSystem<CameraManager>().CameraWorldHeight;
             var playerCameraBottom  = playerY - cameraWorldHeight / 2;
+
             while (LowestPanelPoint > playerCameraBottom)
             {
                 PanelEntities.Add(new Entity(

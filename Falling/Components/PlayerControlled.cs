@@ -15,5 +15,6 @@ namespace Falling.Components
 
         public float JumpForceRatio { get; set; }
         public float RotationSpeed { get; set; }
+        public float HorizontalMotion { get; set; }
     }
 }

@@ -92,6 +92,7 @@
     <Compile Include="Systems\TrimmedSpriteRenderer.cs" />
     <Compile Include="Systems\VertexManager.cs" />
     <Compile Include="Systems\VertexRenderer.cs" />
+    <Compile Include="Systems\WallManager.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -107,7 +107,6 @@ namespace Falling.Systems
 
         private void CreateTextureBasedFixture(Entity entity, Physics physics, Dimensions dimensions)
         {
-
             var physicsTexture = Game.GetSystem<TextureManager>().Textures[entity.GetComponent<PhysicsSource>().Path];
             var data = new uint[physicsTexture.Width * physicsTexture.Height];
             physicsTexture.GetData(data);

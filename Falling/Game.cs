@@ -51,14 +51,15 @@ namespace Falling
             AddSystem(new DebugGraphicsManager());
             AddSystem(new VertexRenderer(graphics.GraphicsDevice));
             AddSystem(new VertexManager());
+            AddSystem(new WallManager());
 
             new Entity(
-                new Textured {Path = "WhitePixel"},
+                new Textured {Path = "DebugCircle"},
                 new ColorTint { Color = new Color(255, 0, 0)},
                 new Transform { Position = new Vector2(0, 40) },
-                new Dimensions { Width = 0.75f, Height = 0.75f },
-                new Physics { Shape = PhysicsShape.Circle, AngularDamping = 2f, Friction = 0.4f },
-                new PlayerControlled { JumpForceRatio = 5, RotationSpeed = 5 },
+                new Dimensions { Width = 0.6f, Height = 0.6f },
+                new Physics { Shape = PhysicsShape.Circle, AngularDamping = 7f, Friction = 0.4f },
+                new PlayerControlled { JumpForceRatio = 4, RotationSpeed = 15 , HorizontalMotion = 0.01f },
                 new TrimmedSprite(),
                 new CameraTarget()
             );

@@ -19,6 +19,7 @@ namespace Falling.Systems
         };
         public List<Type> SubscribedComponentTypes { get { return subscribedComponentTypes; } }
 
+        private KeyboardState previousState = Keyboard.GetState();
         public void Update(Entity entity)
         {
             var physics = entity.GetComponent<Physics>();
@@ -26,6 +27,7 @@ namespace Falling.Systems
             var keyboard = Keyboard.GetState();
 
             ApplyRotation(physics, playerControlled.RotationSpeed, keyboard);
+            ApplyHorizontalMotion(physics, playerControlled.HorizontalMotion, keyboard);
 
             var world = Game.GetSystem<PhysicsManager>().World;
             var dimensions = entity.GetComponent<Dimensions>();
@@ -39,13 +41,15 @@ namespace Falling.Systems
                 }
             }
 
-            if (keyboard.IsKeyDown(Keys.X))
+            if (keyboard.IsKeyDown(Keys.X) && !previousState.IsKeyDown(Keys.X))
             {
                 var destructableManager = Game.GetSystem<DestructableManager>();
                 var verticesToCut = PolygonTools.CreateCircle(2, 20);
                 verticesToCut.Translate(physics.Body.Position);
                 destructableManager.VerticesToCut.Add(verticesToCut);
             }
+
+            previousState = keyboard;
         }
 
         private bool OnGround(World world, Body playerBody, Vector2 position, float radius)
@@ -65,6 +69,23 @@ namespace Falling.Systems
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
 
             return fixtureList.Where((f) => f.Body != playerBody).Any();
+        }
+
+        private void ApplyHorizontalMotion(Physics physics, float horizontalMotion, KeyboardState keyboard)
+        {
+            var linearMultiplier = 0f;
+            if (keyboard.IsKeyDown(Keys.Left))
+            {
+                linearMultiplier -= horizontalMotion;
+            }
+            if (keyboard.IsKeyDown(Keys.Right))
+            {
+                linearMultiplier += horizontalMotion;
+            }
+            if (linearMultiplier != 0)
+            {
+                physics.Body.ApplyLinearImpulse(new Vector2(linearMultiplier, 0));
+            }
         }
 
         private void ApplyRotation(Physics physics, float maxSpeed, KeyboardState keyboard)
