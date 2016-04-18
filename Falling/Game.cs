@@ -16,9 +16,52 @@ namespace Falling
 {
     public class Game : Microsoft.Xna.Framework.Game
     {
+        public static void InitialEntities()
+        {
+            new Entity(
+                new Textured { Path = "DebugCircle" },
+                new ColorTint { Color = new Color(255, 0, 0) },
+                new Transform { Position = new Vector2(0, 40) },
+                new Dimensions { Width = 0.6f, Height = 0.6f },
+                new Physics { Shape = PhysicsShape.Circle, AngularDamping = 7f, Friction = 0.6f },
+                new PlayerControlled { JumpForceRatio = 4, RotationSpeed = 15, HorizontalMotion = 0.02f },
+                new TrimmedSprite(),
+                new CameraTarget()
+            );
+        }
+
+        public static Entity Bomb(float size, Vector2 position)
+        {
+            return new Entity(
+                new Textured { Path = "WhitePixel" },
+                new ColorTint { Color = new Color(0, 255, 0) },
+                new Transform { Position = position },
+                new Dimensions { Width = 0.25f * size, Height = 0.1f * size },
+                new Physics { Shape = PhysicsShape.Circle, AngularDamping = 2f, Friction = 0.4f },
+                new TrimmedSprite(),
+                new Explosive { FuseTime = 3, ExplosionRadius = size }
+            );
+        }
+
+        public static Entity Panel(float depth)
+        {
+            return new Entity(
+                new Textured { Path = "Debug" },
+                new Transform { Position = new Vector2(0, depth - 5) },
+                new Dimensions { Width = 10, Height = 10 },
+                new Physics { Shape = PhysicsShape.Rectangle, Static = true },
+                new GridPhysics { GridSize = 1f },
+                new TrimmedSprite(),
+                new Destructable(),
+                new Trigger()
+            );
+        }
+
+        #region BoilerPlate
         GraphicsDeviceManager graphics;
 
-        public static Random random;
+        public static Random Random { get; set; }
+        public static float Time { get; set; }
 
         public static readonly List<Entity> Entities = new List<Entity>();
         public static readonly Dictionary<Type, object> Systems = new Dictionary<Type, object>();
@@ -36,7 +79,8 @@ namespace Falling
         public Game()
         {
             graphics = new GraphicsDeviceManager(this);
-            random = new Random();
+            Random = new Random();
+            Time = 0;
             Content.RootDirectory = @"Content/bin";
         }
 
@@ -55,21 +99,13 @@ namespace Falling
             AddSystem(new VertexRenderer(graphics.GraphicsDevice));
             AddSystem(new VertexManager());
             AddSystem(new WallManager());
-            AddSystem(new ExplosionManager());
+            AddSystem(new BombManager());
 
-            new Entity(
-                new Textured {Path = "DebugCircle"},
-                new ColorTint { Color = new Color(255, 0, 0)},
-                new Transform { Position = new Vector2(0, 40) },
-                new Dimensions { Width = 0.6f, Height = 0.6f },
-                new Physics { Shape = PhysicsShape.Circle, AngularDamping = 7f, Friction = 0.4f },
-                new PlayerControlled { JumpForceRatio = 4, RotationSpeed = 15 , HorizontalMotion = 0.01f },
-                new TrimmedSprite(),
-                new CameraTarget()
-            );
+            InitialEntities();
 
             base.Initialize();
         }
+        #endregion
 
         #region SubscriptionPumpers
         protected override void LoadContent()
@@ -99,6 +135,7 @@ namespace Falling
 
         protected override void Update(GameTime gameTime)
         {
+            Time += (gameTime.ElapsedGameTime.Milliseconds / 1000f);
             foreach (var system in UpdatedSystems)
             {
                 system.Update();

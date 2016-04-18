@@ -27,15 +27,7 @@ namespace Falling.Systems
 
             while (LowestPanelPoint > playerCameraBottom)
             {
-                PanelEntities.Add(new Entity(
-                    new Textured { Path = "Debug" },
-                    new Transform { Position = new Vector2(0, LowestPanelPoint - 5) },
-                    new Dimensions { Width = 10, Height = 10 },
-                    new Physics { Shape = PhysicsShape.Rectangle, Static = true },
-                    new GridPhysics { GridSize = 1f },
-                    new TrimmedSprite(),
-                    new Destructable()
-                ));
+                PanelEntities.Add(Game.Panel(LowestPanelPoint));
                 LowestPanelPoint -= 10;
             }
 

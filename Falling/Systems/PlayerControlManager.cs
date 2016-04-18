@@ -18,7 +18,7 @@ namespace Falling.Systems
             typeof(PlayerControlled)
         };
         public List<Type> SubscribedComponentTypes { get { return subscribedComponentTypes; } }
-
+        
         private KeyboardState previousState = Keyboard.GetState();
         public void Update(Entity entity)
         {
@@ -36,7 +36,7 @@ namespace Falling.Systems
             {
                 if (keyboard.IsKeyDown(Keys.Space) || keyboard.IsKeyDown(Keys.Up))
                 {
-                    var volume = dimensions.Width*dimensions.Height;
+                    var volume = dimensions.Width * dimensions.Height;
                     physics.Body.ApplyLinearImpulse(new Vector2(0, playerControlled.JumpForceRatio * volume));
                 }
             }
@@ -55,15 +55,15 @@ namespace Falling.Systems
         private bool OnGround(World world, Body playerBody, Vector2 position, float radius)
         {
             var fixtureList = new List<Fixture>();
-            var p1 = new Vector2(-radius / 2, -radius - 0.1f);
-            var p2 = new Vector2(radius / 2, -radius - 0.1f);
+            var p1 = new Vector2(-radius / 2, -radius - 0.05f);
+            var p2 = new Vector2(radius / 2, -radius - 0.05f);
             fixtureList.AddRange(world.RayCast(position + p1, position + p2));
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
-            p1 = new Vector2(-radius / 2, -radius - 0.1f);
+            p1 = new Vector2(-radius / 2, -radius - 0.05f);
             p2 = new Vector2(-radius, 0);
             fixtureList.AddRange(world.RayCast(position + p1, position + p2));
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
-            p1 = new Vector2(radius / 2, -radius - 0.1f);
+            p1 = new Vector2(radius / 2, -radius - 0.05f);
             p2 = new Vector2(radius, 0);
             fixtureList.AddRange(world.RayCast(position + p1, position + p2));
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
