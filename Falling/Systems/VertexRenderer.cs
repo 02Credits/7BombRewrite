@@ -24,7 +24,6 @@ namespace Falling.Systems
             graphics.BlendState = new BlendState {
                 AlphaSourceBlend = Blend.SourceAlpha
             };
-            //graphics.BlendState = BlendState.AlphaBlend;
             graphics.RasterizerState = RasterizerState.CullNone;
             graphics.SamplerStates[0] = SamplerState.PointWrap;
             graphics.DepthStencilState = DepthStencilState.Default;

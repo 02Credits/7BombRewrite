@@ -12,12 +12,14 @@ namespace Falling.Systems
 {
     public class VertexManager : IDrawnSystem
     {
+        public bool Debug { get; set; }
         public Dictionary<Texture2D, TextureVertexManager> Managers = new Dictionary<Texture2D, TextureVertexManager>();
         public List<Texture2D> TextureOrder = new List<Texture2D>();
         public List<VertexPositionColor> LineVertices = new List<VertexPositionColor>();
 
-        private TextureVertexManager GetManager(Texture2D texture)
+        private TextureVertexManager GetManager(Texture2D texture, bool debug = true)
         {
+            Debug = debug;
             TextureVertexManager returnManager = null;
             Managers.TryGetValue(texture, out returnManager);
             if (returnManager == null)
@@ -57,44 +59,46 @@ namespace Falling.Systems
 
         public void AddDebugVertices(Vertices vertices, Color color, Vector2 position, float rotation)
         {
-            VertexPositionColor firstVpc;
-            VertexPositionColor secondVpc;
-
-            var firstVertInitialised = false;
-            var firstVert = Vector2.Zero;
-            var translationMatrix = Matrix.CreateTranslation(new Vector3(position, 0));
-            var rotationMatrix = Matrix.CreateRotationZ(rotation);
-            var transformationMatrix = rotationMatrix * translationMatrix;
-
-            foreach (var fixtureVert in vertices)
+            if (Debug)
             {
-                if (!firstVertInitialised)
-                {
-                    firstVertInitialised = true;
-                    firstVert = fixtureVert;
-                }
-                else
-                {
-                    var secondVert = fixtureVert;
+                var firstVertInitialised = false;
+                var firstVert = Vector2.Zero;
+                var translationMatrix = Matrix.CreateTranslation(new Vector3(position, 0));
+                var rotationMatrix = Matrix.CreateRotationZ(rotation);
+                var transformationMatrix = rotationMatrix * translationMatrix;
 
-                    firstVpc.Position = Vector3.Transform(new Vector3(firstVert, 0), transformationMatrix);
-                    firstVpc.Color = color;
-                    LineVertices.Add(firstVpc);
-
-                    secondVpc.Position = Vector3.Transform(new Vector3(secondVert, 0), transformationMatrix);
-                    secondVpc.Color = color;
-                    LineVertices.Add(secondVpc);
-                    firstVert = secondVert;
+                foreach (var fixtureVert in vertices)
+                {
+                    if (!firstVertInitialised)
+                    {
+                        firstVertInitialised = true;
+                        firstVert = fixtureVert;
+                    }
+                    else
+                    {
+                        var secondVert = fixtureVert;
+                        AddDebugLine(firstVert, secondVert, color, transformationMatrix);
+                        firstVert = secondVert;
+                    }
                 }
+
+                AddDebugLine(firstVert, vertices[0], color, transformationMatrix);
             }
+        }
 
-            firstVpc.Position = Vector3.Transform(new Vector3(firstVert, 0), transformationMatrix);
-            firstVpc.Color = color;
-            LineVertices.Add(firstVpc);
+        public void AddDebugLine(Vector2 p1, Vector2 p2, Color color)
+        {
+            AddDebugLine(p1, p2, color, Matrix.Identity);
+        }
 
-            secondVpc.Position = Vector3.Transform(new Vector3(vertices[0], 0), transformationMatrix);
-            secondVpc.Color = color;
-            LineVertices.Add(secondVpc);
+        public void AddDebugLine(Vector2 p1, Vector2 p2, Color color, Matrix transform)
+        {
+            VertexPositionColor vert;
+            vert.Position = Vector3.Transform(new Vector3(p1, 0), transform);
+            vert.Color = color;
+            LineVertices.Add(vert);
+            vert.Position = Vector3.Transform(new Vector3(p2, 0), transform);
+            LineVertices.Add(vert);
         }
 
         public void Draw()
@@ -111,13 +115,13 @@ namespace Falling.Systems
         {
             public static VertexPositionColorTexture vertexToAdd;
             public VertexPositionColorTexture[] Vertices = new VertexPositionColorTexture[4000];
-            public Int16[] Indices = new Int16[4000];
+            public short[] Indices = new short[4000];
 
             public int VertexCount { get; private set; }
 
             public int IndexCount { get; private set; }
 
-            private Int16 CurrentIndex { get; set; }
+            private short CurrentIndex { get; set; }
 
             private int CurrentMaxVertexCount { get; set; }
 
@@ -136,7 +140,7 @@ namespace Falling.Systems
                 AddIndex((short)(CurrentIndex + 2));
                 AddIndex((short)(CurrentIndex + 2));
                 AddIndex((short)(CurrentIndex + 3));
-                AddIndex((short)(CurrentIndex));
+                AddIndex(CurrentIndex);
 
                 CurrentIndex += 4;
             }
@@ -161,7 +165,7 @@ namespace Falling.Systems
                     AddIndex((short)(CurrentIndex + i + 1));
                 }
 
-                CurrentIndex += (short)(count);
+                CurrentIndex += (short)count;
             }
 
             public void AddVertex(Vector3 position, Vector2 texturePosition, Color color)
@@ -176,7 +180,7 @@ namespace Falling.Systems
                 Vertices[VertexCount - 1] = vertexToAdd;
             }
 
-            public void AddIndex(Int16 index)
+            public void AddIndex(short index)
             {
                 IndexCount += 1;
 

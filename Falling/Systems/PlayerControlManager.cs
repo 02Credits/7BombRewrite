@@ -54,21 +54,29 @@ namespace Falling.Systems
 
         private bool OnGround(World world, Body playerBody, Vector2 position, float radius)
         {
+            var vertexManager = Game.GetSystem<VertexManager>();
             var fixtureList = new List<Fixture>();
             var p1 = new Vector2(-radius / 2, -radius - 0.05f);
             var p2 = new Vector2(radius / 2, -radius - 0.05f);
+            vertexManager.AddDebugLine(position + p1, position + p2, Color.Purple);
             fixtureList.AddRange(world.RayCast(position + p1, position + p2));
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
             p1 = new Vector2(-radius / 2, -radius - 0.05f);
-            p2 = new Vector2(-radius, 0);
+            p2 = new Vector2(-radius - 0.01f, 0);
+            vertexManager.AddDebugLine(position + p1, position + p2, Color.Purple);
             fixtureList.AddRange(world.RayCast(position + p1, position + p2));
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
             p1 = new Vector2(radius / 2, -radius - 0.05f);
-            p2 = new Vector2(radius, 0);
+            p2 = new Vector2(radius + 0.01f, 0);
+            vertexManager.AddDebugLine(position + p1, position + p2, Color.Purple);
             fixtureList.AddRange(world.RayCast(position + p1, position + p2));
             fixtureList.AddRange(world.RayCast(position + p2, position + p1));
 
-            return fixtureList.Where((f) => f.Body != playerBody).Any();
+            return fixtureList
+                .Where((f) => f.Body != playerBody)
+                .Where((f) => f.Body.UserData is Entity)
+                .Where((f) => ((Entity)f.Body.UserData).HasComponent<Jumpable>())
+                .Any();
         }
 
         private void ApplyHorizontalMotion(Physics physics, float horizontalMotion, KeyboardState keyboard)

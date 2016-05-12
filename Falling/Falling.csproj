@@ -58,6 +58,7 @@
     <Compile Include="Components\Dimensions.cs" />
     <Compile Include="Components\Explosive.cs" />
     <Compile Include="Components\GridPhysics.cs" />
+    <Compile Include="Components\Jumpable.cs" />
     <Compile Include="Components\Particle.cs" />
     <Compile Include="Components\Physics.cs" />
     <Compile Include="Components\PhysicsSource.cs" />
