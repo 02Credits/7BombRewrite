@@ -19,7 +19,11 @@ namespace Falling
         public static void InitialEntities()
         {
             new Entity(
+#if DEBUG
                 new Textured { Path = "DebugCircle" },
+#else
+                new Textured { Path = "WhitePixel" },
+#endif
                 new ColorTint { Color = new Color(255, 0, 0) },
                 new Transform { Position = new Vector2(0, 40) },
                 new Dimensions { Width = 0.6f, Height = 0.6f },
@@ -38,7 +42,7 @@ namespace Falling
                 new Transform { Position = position },
                 new Dimensions { Width = 0.25f * size, Height = 0.5f * size },
                 new Physics { Shape = PhysicsShape.Texture, AngularDamping = 2f, Friction = 0.4f },
-                new PhysicsSource() { Path = "Bomb" },
+                new PhysicsSource { Path = "Bomb" },
                 new Jumpable(),
                 new TrimmedSprite(),
                 new Explosive { FuseTime = 3, ExplosionRadius = size }
@@ -65,7 +69,23 @@ namespace Falling
             );
         }
 
-#region BoilerPlate
+        public static Entity Coin(Vector2 position)
+        {
+            return new Entity(
+                new Textured { Path = "Coin" },
+                new ColorTint { Color = new Color(255, 255, 255) },
+                new Transform { Position = position },
+                new Dimensions { Width = 0.384f, Height = 0.512f },
+                new Physics { Shape = PhysicsShape.Texture, AngularDamping = 2f, Friction = 0.4f, FixedAngle = true },
+                new PhysicsSource { Path = "Coin" },
+                new Jumpable(),
+                new TrimmedSprite(),
+                new Collectable { Type = CollectableType.Coin },
+                new Trigger()
+            );
+        }
+
+        #region BoilerPlate
         GraphicsDeviceManager graphics;
 
         public static Random Random { get; set; }
@@ -103,21 +123,20 @@ namespace Falling
             AddSystem(new TrimmedSpriteRenderer());
             AddSystem(new CameraManager(graphics.GraphicsDevice));
             AddSystem(new PlayerControlManager());
-#if DEBUG
             AddSystem(new DebugGraphicsManager());
-#endif
             AddSystem(new VertexRenderer(graphics.GraphicsDevice));
             AddSystem(new VertexManager());
             AddSystem(new WallManager());
             AddSystem(new BombManager());
+            AddSystem(new CoinManager());
 
             InitialEntities();
 
             base.Initialize();
         }
-#endregion
+        #endregion
 
-#region SubscriptionPumpers
+        #region SubscriptionPumpers
         protected override void LoadContent()
         {
             foreach (var system in LoadedSystems)
@@ -171,7 +190,7 @@ namespace Falling
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.White);
+            GraphicsDevice.Clear(Color.Black);
 
             foreach (var system in DrawnSystems)
             {
@@ -220,9 +239,9 @@ namespace Falling
 
             base.UnloadContent();
         }
-#endregion
+        #endregion
 
-#region SystemManagement
+        #region SystemManagement
         public static void AddSystem(object system)
         {
             var initializedEntitySystem = system as IInitializedEntitySystem;
@@ -299,9 +318,9 @@ namespace Falling
                 return default(T);
             }
         }
-#endregion
+        #endregion
 
-#region EntityManagement
+        #region EntityManagement
         public static void AddEntity(Entity entity)
         {
             Entities.Add(entity);
@@ -350,6 +369,6 @@ namespace Falling
                 }
             }
         }
-#endregion
+        #endregion
     }
 }

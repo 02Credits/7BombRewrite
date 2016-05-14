@@ -44,7 +44,7 @@ namespace Falling.Systems
 
         public void Update()
         {
-            if(Game.Random.Next(1000) <= 10)
+            if (Game.Random.Next(1000) <= 10)
             {
                 Game.Bomb((float)Game.Random.NextDouble() * 1.5f + 0.75f,
                     new Vector2((float)((Game.Random.NextDouble() * 8) - 4), 10));
@@ -54,7 +54,7 @@ namespace Falling.Systems
         public void Update(Entity entity)
         {
             var explosive = entity.GetComponent<Explosive>();
-            
+
             if (explosive.Triggered)
             {
                 if (Game.Time - explosive.TriggeredTime > explosive.FuseTime)
@@ -64,6 +64,21 @@ namespace Falling.Systems
                     var verticesToCut = FarseerPhysics.Common.PolygonTools.CreateCircle(explosive.ExplosionRadius, 20);
                     verticesToCut.Translate(entity.GetComponent<Physics>().Body.Position);
                     destructableManager.VerticesToCut.Add(verticesToCut);
+
+                    var entitiesInRange = new List<Entity>();
+                    var myPosition = entity.GetComponent<Transform>().Position;
+                    foreach (var otherEntity in Game.Entities)
+                    {
+                        if (otherEntity.HasComponent<Collectable>())
+                        {
+                            var otherPosition = otherEntity.GetComponent<Transform>().Position;
+                            var distance = Vector2.Distance(myPosition, otherPosition);
+                            if (distance <= explosive.ExplosionRadius)
+                                entitiesInRange.Add(otherEntity);
+                        }
+                    }
+
+                    entitiesInRange.ForEach(o => Game.RemoveEntity(o));
 
                     Game.RemoveEntity(entity);
                 }

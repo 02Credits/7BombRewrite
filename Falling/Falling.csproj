@@ -52,6 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\CameraTarget.cs" />
+    <Compile Include="Components\Collectable.cs" />
     <Compile Include="Components\ColorTint.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\Destructable.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Systems\CameraManager.cs" />
+    <Compile Include="Systems\CoinManager.cs" />
     <Compile Include="Systems\DebugGraphicsManager.cs" />
     <Compile Include="Systems\DestructableManager.cs" />
     <Compile Include="Systems\BombManager.cs" />

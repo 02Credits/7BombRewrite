@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -12,14 +13,12 @@ namespace Falling.Systems
 {
     public class VertexManager : IDrawnSystem
     {
-        public bool Debug { get; set; }
         public Dictionary<Texture2D, TextureVertexManager> Managers = new Dictionary<Texture2D, TextureVertexManager>();
         public List<Texture2D> TextureOrder = new List<Texture2D>();
         public List<VertexPositionColor> LineVertices = new List<VertexPositionColor>();
 
-        private TextureVertexManager GetManager(Texture2D texture, bool debug = true)
+        private TextureVertexManager GetManager(Texture2D texture)
         {
-            Debug = debug;
             TextureVertexManager returnManager = null;
             Managers.TryGetValue(texture, out returnManager);
             if (returnManager == null)
@@ -57,33 +56,31 @@ namespace Falling.Systems
             manager.AddPolygon(color, count, worldList, textureList);
         }
 
+        [Conditional("DEBUG")]
         public void AddDebugVertices(Vertices vertices, Color color, Vector2 position, float rotation)
         {
-            if (Debug)
+            var firstVertInitialised = false;
+            var firstVert = Vector2.Zero;
+            var translationMatrix = Matrix.CreateTranslation(new Vector3(position, 0));
+            var rotationMatrix = Matrix.CreateRotationZ(rotation);
+            var transformationMatrix = rotationMatrix * translationMatrix;
+
+            foreach (var fixtureVert in vertices)
             {
-                var firstVertInitialised = false;
-                var firstVert = Vector2.Zero;
-                var translationMatrix = Matrix.CreateTranslation(new Vector3(position, 0));
-                var rotationMatrix = Matrix.CreateRotationZ(rotation);
-                var transformationMatrix = rotationMatrix * translationMatrix;
-
-                foreach (var fixtureVert in vertices)
+                if (!firstVertInitialised)
                 {
-                    if (!firstVertInitialised)
-                    {
-                        firstVertInitialised = true;
-                        firstVert = fixtureVert;
-                    }
-                    else
-                    {
-                        var secondVert = fixtureVert;
-                        AddDebugLine(firstVert, secondVert, color, transformationMatrix);
-                        firstVert = secondVert;
-                    }
+                    firstVertInitialised = true;
+                    firstVert = fixtureVert;
                 }
-
-                AddDebugLine(firstVert, vertices[0], color, transformationMatrix);
+                else
+                {
+                    var secondVert = fixtureVert;
+                    AddDebugLine(firstVert, secondVert, color, transformationMatrix);
+                    firstVert = secondVert;
+                }
             }
+
+            AddDebugLine(firstVert, vertices[0], color, transformationMatrix);
         }
 
         public void AddDebugLine(Vector2 p1, Vector2 p2, Color color)
