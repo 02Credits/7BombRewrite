@@ -70,7 +70,7 @@ namespace Falling.Systems
                 else
                 {
                     var timeLeftPercentage = (Game.Time - explosive.TriggeredTime) / explosive.FuseTime;
-                    entity.GetComponent<ColorTint>().Color = new Color((int)(255f * timeLeftPercentage), (int)((1f - timeLeftPercentage) * 255f), 0);
+                    entity.GetComponent<ColorTint>().Color = new Color(255, (int)((1.0f - timeLeftPercentage) * 255.0f), (int)((1.0f - timeLeftPercentage) * 255.0f));
                 }
             }
         }
