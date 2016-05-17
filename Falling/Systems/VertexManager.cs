@@ -83,11 +83,13 @@ namespace Falling.Systems
             AddDebugLine(firstVert, vertices[0], color, transformationMatrix);
         }
 
+        [Conditional("DEBUG")]
         public void AddDebugLine(Vector2 p1, Vector2 p2, Color color)
         {
             AddDebugLine(p1, p2, color, Matrix.Identity);
         }
 
+        [Conditional("DEBUG")]
         public void AddDebugLine(Vector2 p1, Vector2 p2, Color color, Matrix transform)
         {
             VertexPositionColor vert;

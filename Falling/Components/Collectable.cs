@@ -11,7 +11,7 @@ namespace Falling.Components
         Godmode // light green triangle
     }
 
-    class Collectable : Component
+    public class Collectable : Component
     {
         static List<Type> requiredComponents = new List<Type>
         {
@@ -20,5 +20,6 @@ namespace Falling.Components
         public override List<Type> RequiredComponents { get { return requiredComponents; } }
 
         public CollectableType Type { get; set; }
+        public bool Collected = false;
     }
 }

@@ -44,10 +44,11 @@ namespace Falling.Systems
 
         public void Update()
         {
-            if (Game.Random.Next(1000) <= 10)
+            if (Game.Random.Next(1000) <= 5)
             {
+                var cameraHeight = Game.GetSystem<CameraManager>().CameraPosition.Y;
                 Game.Bomb((float)Game.Random.NextDouble() * 1.5f + 0.75f,
-                    new Vector2((float)((Game.Random.NextDouble() * 8) - 4), 10));
+                    new Vector2((float)((Game.Random.NextDouble() * 8) - 4), cameraHeight + 10));
             }
         }
 

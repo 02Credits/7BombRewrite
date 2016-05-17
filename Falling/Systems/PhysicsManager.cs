@@ -57,7 +57,17 @@ namespace Falling.Systems
 
             if (entity.HasComponent<Destructable>())
             {
-                entity.GetComponent<Destructable>().FullVerticesSet = physics.Body.FixtureList.Select(fixture => ((PolygonShape)fixture.Shape).Vertices).ToList();
+                entity.GetComponent<Destructable>().FullVerticesSet = 
+                    physics.Body.FixtureList.Select(fixture => {
+                        if (fixture.Shape is CircleShape)
+                        {
+                            return PolygonTools.CreateCircle(fixture.Shape.Radius, 50);
+                        }
+                        else
+                        {
+                            return ((PolygonShape)fixture.Shape).Vertices;
+                        }
+                    }).ToList();
             }
 
             physics.Body.UserData = entity;

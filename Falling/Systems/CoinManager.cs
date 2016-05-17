@@ -10,34 +10,28 @@ using System.Text;
 
 namespace Falling.Systems
 {
-    class CoinManager : IInitializedEntitySystem, IUpdatedSystem, IUpdatedEntitySystem
+    public class CoinManager : IInitializedSystem, IUpdatedSystem
     {
+        public int CurrentScore { get; set; }
+
         static List<Type> subscribedComponentTypes = new List<Type>
         {
             typeof(Collectable)
         };
         public List<Type> SubscribedComponentTypes { get { return subscribedComponentTypes; } }
 
-        public void Initialize(Entity entity)
+        public void Initialize()
         {
-            entity.GetComponent<Physics>().Body.OnCollision += Collision;
+            CurrentScore = 0;
+            Game.GetSystem<CollectableManager>().OnCollected += Collected;
         }
 
-        private bool Collision(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        private void Collected(Entity collectable)
         {
-            var myEntity = fixtureA.Body.UserData as Entity;
-            var collectable = myEntity.GetComponent<Collectable>();
-
-            var otherEntity = fixtureB.Body.UserData as Entity;
-            if (otherEntity != null)
+            if (collectable.HasComponent<Coin>())
             {
-                if (otherEntity.HasComponent<PlayerControlled>())
-                {
-                    Game.RemoveEntity(myEntity);
-                }
+                CurrentScore++;
             }
-
-            return true;
         }
 
         public void Update()
@@ -46,10 +40,6 @@ namespace Falling.Systems
             {
                 Game.Coin(new Vector2((float)((Game.Random.NextDouble() * 8) - 4), 10));
             }
-        }
-
-        public void Update(Entity entity)
-        {
         }
     }
 }

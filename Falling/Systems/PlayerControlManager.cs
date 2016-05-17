@@ -36,8 +36,11 @@ namespace Falling.Systems
             {
                 if (keyboard.IsKeyDown(Keys.Space) || keyboard.IsKeyDown(Keys.Up))
                 {
-                    var volume = dimensions.Width * dimensions.Height;
-                    physics.Body.ApplyLinearImpulse(new Vector2(0, playerControlled.JumpForceRatio * volume));
+                    if (physics.Body.LinearVelocity.Y <= 5)
+                    {
+                        var volume = physics.Body.FixtureList.Select(fixture => fixture.Shape.MassData.Area).Sum();
+                        physics.Body.ApplyLinearImpulse(new Vector2(0, playerControlled.JumpForceRatio * volume));
+                    }
                 }
             }
 

@@ -28,8 +28,9 @@ namespace Falling
                 new Transform { Position = new Vector2(0, 40) },
                 new Dimensions { Width = 0.6f, Height = 0.6f },
                 new Physics { Shape = PhysicsShape.Circle, AngularDamping = 5f, Friction = 1.5f },
-                new PlayerControlled { JumpForceRatio = 5, RotationSpeed = 13, HorizontalMotion = 0.02f },
+                new PlayerControlled { JumpForceRatio = 7, RotationSpeed = 13, HorizontalMotion = 0.02f },
                 new TrimmedSprite(),
+                new Destructable(),
                 new CameraTarget()
             );
         }
@@ -78,7 +79,6 @@ namespace Falling
                 new Dimensions { Width = 0.384f, Height = 0.512f },
                 new Physics { Shape = PhysicsShape.Texture, AngularDamping = 2f, Friction = 0.4f, FixedAngle = true },
                 new PhysicsSource { Path = "Coin" },
-                new Jumpable(),
                 new TrimmedSprite(),
                 new Collectable { Type = CollectableType.Coin },
                 new Trigger()
@@ -93,6 +93,7 @@ namespace Falling
 
         public static readonly List<Entity> Entities = new List<Entity>();
         public static readonly Dictionary<Type, object> Systems = new Dictionary<Type, object>();
+        public static readonly List<IInitializedSystem> InitializedSystems = new List<IInitializedSystem>();
         public static readonly List<IInitializedEntitySystem> InitializedEntitySystems = new List<IInitializedEntitySystem>();
         public static readonly List<ILoadedSystem> LoadedSystems = new List<ILoadedSystem>();
         public static readonly List<ILoadedEntitySystem> LoadedEntitySystems = new List<ILoadedEntitySystem>();
@@ -128,8 +129,10 @@ namespace Falling
             AddSystem(new VertexManager());
             AddSystem(new WallManager());
             AddSystem(new BombManager());
+            AddSystem(new CollectableManager());
             AddSystem(new CoinManager());
 
+            InitializeSystems();
             InitialEntities();
 
             base.Initialize();
@@ -137,6 +140,14 @@ namespace Falling
         #endregion
 
         #region SubscriptionPumpers
+        protected void InitializeSystems()
+        {
+            foreach (var system in InitializedSystems)
+            {
+                system.Initialize();
+            }
+        }
+
         protected override void LoadContent()
         {
             foreach (var system in LoadedSystems)
@@ -244,6 +255,12 @@ namespace Falling
         #region SystemManagement
         public static void AddSystem(object system)
         {
+            var initializedSystem = system as IInitializedSystem;
+            if (initializedSystem != null)
+            {
+                InitializedSystems.Add(initializedSystem);
+            }
+
             var initializedEntitySystem = system as IInitializedEntitySystem;
             if (initializedEntitySystem != null)
             {
