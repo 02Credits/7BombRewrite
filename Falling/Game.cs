@@ -80,7 +80,8 @@ namespace Falling
                 new Physics { Shape = PhysicsShape.Texture, AngularDamping = 2f, Friction = 0.4f, FixedAngle = true },
                 new PhysicsSource { Path = "Coin" },
                 new TrimmedSprite(),
-                new Collectable { Type = CollectableType.Coin },
+                new Collectable(),
+                new Coin(),
                 new Trigger()
             );
         }
