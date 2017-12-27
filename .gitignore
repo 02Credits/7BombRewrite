@@ -1,6 +1,7 @@
 packages/
 bin/
 obj/
+.vs/
 Thumbs.db
 *.csproj.user
 *.suo
